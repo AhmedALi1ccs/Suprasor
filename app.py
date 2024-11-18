@@ -13,11 +13,7 @@ import concurrent.futures
 import io
 import psycopg2
 import os
-from dotenv import load_dotenv
 
-
-# Load environment variables
-load_dotenv()
 def initialize_hits(conn):
     try:
         cur = conn.cursor()
@@ -62,58 +58,8 @@ def update_total_hits(conn, new_hits):
 
 
 # Connect to PostgreSQL Database
-def connect_to_postgres():
-    try:
-        conn = psycopg2.connect(
-            host=os.getenv("POSTGRES_HOST"),
-            database=os.getenv("POSTGRES_DB"),
-            user=os.getenv("POSTGRES_USER"),
-            password=os.getenv("POSTGRES_PASSWORD"),
-            port=os.getenv("POSTGRES_PORT"),
-            sslmode=os.getenv("POSTGRES_SSLMODE")
-        )
-        return conn
-    except Exception as e:
-        st.error(f"Error connecting to PostgreSQL: {e}")
-        return None
-def increment_hit_counter():
-    conn = connect_to_postgres()
-    if conn:
-        cur = conn.cursor()
 
-        # Check if the hit counter row exists, if not, create one
-        cur.execute("SELECT count FROM hit_counter LIMIT 1;")
-        result = cur.fetchone()
-        if result is None:
-            cur.execute("INSERT INTO hit_counter (count) VALUES (1);")
-            new_count = 1
-        else:
-            current_count = result[0]
-            new_count = current_count + 1
-            cur.execute("UPDATE hit_counter SET count = %s WHERE id = 1;", (new_count,))
 
-        conn.commit()
-        cur.close()
-        conn.close()
-
-        return new_count
-
-# Retrieve the current hit counter value
-def get_hit_counter():
-    conn = connect_to_postgres()
-    if conn:
-        cur = conn.cursor()
-
-        # Fetch the current hit count
-        cur.execute("SELECT count FROM hit_counter LIMIT 1;")
-        result = cur.fetchone()
-        cur.close()
-        conn.close()
-
-        if result is None:
-            return 0
-        return result[0]
-    return 0
 def parallel_process(df, func, column_name, new_column_name):
     with concurrent.futures.ProcessPoolExecutor() as executor:
         df[new_column_name] = list(executor.map(func, df[column_name]))
@@ -782,12 +728,12 @@ def main():
 
 
             
-            conn = connect_to_postgres()
+
 
         # Ensure table is created
         # Fetch current total hits
-            total_hits = get_total_hits(conn)
-            st.write(f"Total Hits from Previous Sessions: {total_hits}")
+
+
             if st.button('Scrub'):
                 if scrub_on == 'Both':
                     if combined_property_col == 'None' or combined_mailing_col == 'None' or needs_property_col == 'None' or needs_mailing_col == 'None':
@@ -809,16 +755,12 @@ def main():
 
                 # Display results
                 st.header("Scrubbing Results")
-                current_hits = len(hits_df)
-                st.write(f"Current Hits: {current_hits}")
+
 
     # Update the total hits in the database
-                update_total_hits(conn, current_hits)
 
-    # Display updated total hits
-                total_hits += current_hits
-                st.write(f"Total Hits Across All Sessions: {total_hits}")
-                conn.close()
+
+
 
 
                 if not hits_df.empty:

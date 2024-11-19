@@ -611,23 +611,23 @@ def scrub_data(needs_df, allskipped_df, scrub_on):
 
         needs_df['property_address'] = needs_df['property_address'].str.lower()
         allskipped_df['mailing_address'] = allskipped_df['mailing_address'].str.lower()
-        hits_df = needs_df.merge(combined_df, on=['property_address', 'mailing_address'], how='inner').drop_duplicates()
+        hits_df = needs_df.merge(allskipped_df, on=['property_address', 'mailing_address'], how='inner').drop_duplicates()
     elif scrub_on == 'Property Address':
         needs_df = needs_df.drop_duplicates(subset=['property_address'])
-        combined_df = combined_df.drop_duplicates(subset=['property_address'])
+        allskipped_df = allskipped_df.drop_duplicates(subset=['property_address'])
         allskipped_df['property_address'].fillna('', inplace=True)
         needs_df['property_address'].fillna('', inplace=True)
         allskipped_df['property_address'] = allskipped_df['property_address'].apply(preprocess_address).apply(standardize_and_normalize_address).str.lower()
         needs_df['property_address'] = needs_df['property_address'].apply(preprocess_address).apply(standardize_and_normalize_address).str.lower()
-        hits_df = needs_df.merge(combined_df, on=['property_address'], how='inner').drop_duplicates(subset=['property_address'])
+        hits_df = needs_df.merge(allskipped_df, on=['property_address'], how='inner').drop_duplicates(subset=['property_address'])
     elif scrub_on == 'Mailing Address':
         needs_df = needs_df.drop_duplicates(subset=['mailing_address'])
-        combined_df = combined_df.drop_duplicates(subset=['mailing_address'])
+        allskipped_df = allskipped_df.drop_duplicates(subset=['mailing_address'])
         allskipped_df['mailing_address'].fillna('', inplace=True)
         needs_df['mailing_address'].fillna('', inplace=True)
         allskipped_df['mailing_address'] = allskipped_df['mailing_address'].apply(preprocess_address).apply(standardize_and_normalize_address).str.lower()
         needs_df['mailing_address'] = needs_df['mailing_address'].apply(preprocess_address).apply(standardize_and_normalize_address).str.lower()
-        hits_df = needs_df.merge(combined_df, on=['mailing_address'], how='inner').drop_duplicates(subset=['mailing_address'])
+        hits_df = needs_df.merge(allskipped_df, on=['mailing_address'], how='inner').drop_duplicates(subset=['mailing_address'])
 
     # Remove matching records
     if scrub_on == 'Both':

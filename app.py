@@ -740,16 +740,23 @@ def main():
                         st.error("Please map both Property Address and Mailing Address columns for both datasets.")
                     else:
                         hits_df, needs_df_filtered = scrub_data(needs_df, combined_df, scrub_on)
+                        hits_df = hits_df.drop_duplicates(subset=['property_address', 'mailing_address'])
+                        needs_df_filtered = needs_df_filtered.drop_duplicates(subset=['property_address', 'mailing_address'])
                 elif scrub_on =='Property Address':
                     if combined_property_col == 'None' or needs_property_col == 'None':
                         st.error("Please map both Property Address for both datasets.")
+                        
                     else:
                         hits_df, needs_df_filtered = scrub_data(needs_df, combined_df, scrub_on)
+                        hits_df = hits_df.drop_duplicates(subset=['property_address'])
+                        needs_df_filtered = needs_df_filtered.drop_duplicates(subset=['property_address'])
                 elif scrub_on =='Mailing Address':
                     if combined_mailing_col == 'None' or needs_mailing_col == 'None':
                         st.error("Please map both Property Address for both datasets.")
                     else:         
                         hits_df, needs_df_filtered = scrub_data(needs_df, combined_df, scrub_on)
+                        hits_df = hits_df.drop_duplicates(subset=['mailing_address'])
+                        needs_df_filtered = needs_df_filtered.drop_duplicates(subset=['mailing_address'])
                 # Perform the scrubbing process using standardized columns
                 
 

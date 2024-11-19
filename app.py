@@ -597,7 +597,7 @@ def scrub_data(needs_df, allskipped_df, scrub_on):
     # Perform the merge based on selected condition
     if scrub_on == 'Both':
         needs_df = needs_df.drop_duplicates(subset=['property_address', 'mailing_address'])
-        combined_df = combined_df.drop_duplicates(subset=['property_address', 'mailing_address'])
+        allskipped_df = allskipped_df.drop_duplicates(subset=['property_address', 'mailing_address'])
         allskipped_df['property_address'].fillna('', inplace=True)
         allskipped_df['mailing_address'].fillna('', inplace=True)
         needs_df['property_address'].fillna('', inplace=True)
